@@ -82,20 +82,11 @@ for intensity in intensities
     end
 end
 
-# ### Add model corresponding to the approximation algorithm and Lagrangian relaxation heuristic
+# ### Add model corresponding to the approximation algorithm
 
 models["approx"] = Dict(
     "model" => MaximumWeightTwoStageSpanningTree.approx_algorithm_model(),
     "learning_algorithm" => "approx",
-    "train_data_name" => "--",
-    "training_time" => "--",
-    "pert" => false,
-    "intpert" => 0,
-    "nbpert" => 0,
-)
-
-models["ub"] = Dict(
-    "learning_algorithm" => "UB",
     "train_data_name" => "--",
     "training_time" => "--",
     "pert" => false,
@@ -114,6 +105,17 @@ results = test_or_load_models_on_datasets(
     datasets=val_and_test_sets,
     results_folder=results_folder,
     recompute_results=recompute_results
+)
+
+# Add model corresponding to ub
+
+models["ub"] = Dict(
+    "learning_algorithm" => "UB",
+    "train_data_name" => "--",
+    "training_time" => "--",
+    "pert" => false,
+    "intpert" => 0,
+    "nbpert" => 0,
 )
 
 # ## Build hyperparameters choice table
@@ -290,7 +292,7 @@ begin
         fig[1, 1];
         xlabel="|V|",
         ylabel="Gap to Lagrangian Bound (%)",
-        limits=(0, 3600, 0, 6.8),
+        limits=(0, maximum(x_nb_vertices), 0, 6.8),
     )
     lines!(
         ax,
