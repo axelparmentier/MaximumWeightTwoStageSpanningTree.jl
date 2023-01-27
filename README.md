@@ -2,6 +2,8 @@
 
 Companion code to the paper [Learning structured approximations of operations research problems](https://hal.science/hal-03281894).
 
+Detailed documentation [here](https://axelparmentier.github.io/MaximumWeightTwoStageSpanningTree.jl/dev/).
+
 Code was tested only on Ubuntu 22.04 with Julia 1.8.2.
 
 ## Testing the package
