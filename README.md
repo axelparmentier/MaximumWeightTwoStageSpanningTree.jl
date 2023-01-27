@@ -1,4 +1,4 @@
-# TwoStageSpanningTree
+# MaximumWeightTwoStageSpanningTree
 
 Companion code to the paper [Learning structured approximations of operations research problems](https://hal.science/hal-03281894).
 
@@ -22,6 +22,8 @@ Open a `julia` repl in the package folder, and run the following code
     using Pkg
     Pkg.activate(".")
     Pkg.activate("./docs")
+    Pkg.rm("MaximumWeightTwoStageSpanningTree") # Manifest.toml is not pushed, it would take the registry version, which does not exist
+    Pkg.develop(path=".") # Takes instead the local version
     Pkg.instantiate()
     include("docs/make.jl")
 ```
@@ -36,6 +38,8 @@ Open a `julia` repl in the package folder, and run the following code
     using Pkg
     Pkg.activate(".")
     Pkg.activate("./scripts")
+    Pkg.rm("MaximumWeightTwoStageSpanningTree") # Manifest.toml is not pushed, it would take the registry version, which does not exist
+    Pkg.develop(path=".") # Takes instead the local version
     Pkg.instantiate()
     include("scripts/run_paper_experiments.jl")
 ```

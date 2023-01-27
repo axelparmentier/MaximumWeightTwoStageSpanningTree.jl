@@ -22,6 +22,8 @@ In order to reproduce the paper experiments, open a `julia` repl in the package 
     using Pkg
     Pkg.activate(".")
     Pkg.activate("./scripts")
+    Pkg.rm("MaximumWeightTwoStageSpanningTree") # Manifest.toml is not pushed, it would take the registry version, which does not exist
+    Pkg.develop(path=".") # Takes instead the local version
     Pkg.instantiate()
     include("scripts/run_paper_experiments.jl")
 ```
