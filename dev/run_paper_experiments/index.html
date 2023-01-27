@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Experiments · MaximumWeightTwoStageSpanningTree.jl</title><script data-outdated-warner src="../assets/warner.js"></script><link rel="canonical" href="https://axelparmentier.github.io/MaximumWeightTwoStageSpanningTree.jl/run_paper_experiments/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">MaximumWeightTwoStageSpanningTree.jl</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../problem/">Problem statement</a></li><li><a class="tocitem" href="../optimization/">Optimization algorithms</a></li><li class="is-active"><a class="tocitem" href>Experiments</a><ul class="internal"><li><a class="tocitem" href="#Load-packages"><span>Load packages</span></a></li><li><a class="tocitem" href="#Build-training-and-test-set"><span>Build training and test set</span></a></li><li><a class="tocitem" href="#Train-models"><span>Train models</span></a></li><li><a class="tocitem" href="#Evaluate-model-performances-on-validation-and-test-sets"><span>Evaluate model performances on validation and test sets</span></a></li><li><a class="tocitem" href="#Build-hyperparameters-choice-table"><span>Build hyperparameters choice table</span></a></li><li><a class="tocitem" href="#Build-Figure-evaluating-the-performance-of-the-model"><span>Build Figure evaluating the performance of the model</span></a></li></ul></li><li><a class="tocitem" href="../api/">API reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Experiments</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Experiments</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/axelparmentier/MaximumWeightTwoStageSpanningTree.jl/blob/main/scripts/run_paper_experiments.jl" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="*Learning-structured-approximations-of-combinatorial-optimization-problems*-paper-experiments"><a class="docs-heading-anchor" href="#*Learning-structured-approximations-of-combinatorial-optimization-problems*-paper-experiments"><em>Learning structured approximations of combinatorial optimization problems</em> - paper experiments</a><a id="*Learning-structured-approximations-of-combinatorial-optimization-problems*-paper-experiments-1"></a><a class="docs-heading-anchor-permalink" href="#*Learning-structured-approximations-of-combinatorial-optimization-problems*-paper-experiments" title="Permalink"></a></h1><h2 id="Load-packages"><a class="docs-heading-anchor" href="#Load-packages">Load packages</a><a id="Load-packages-1"></a><a class="docs-heading-anchor-permalink" href="#Load-packages" title="Permalink"></a></h2><pre><code class="language-julia hljs">using UnicodePlots
+using MaximumWeightTwoStageSpanningTree
+using Graphs</code></pre><h2 id="Build-training-and-test-set"><a class="docs-heading-anchor" href="#Build-training-and-test-set">Build training and test set</a><a id="Build-training-and-test-set-1"></a><a class="docs-heading-anchor-permalink" href="#Build-training-and-test-set" title="Permalink"></a></h2><h3 id="Choose-dataset-parameters"><a class="docs-heading-anchor" href="#Choose-dataset-parameters">Choose dataset parameters</a><a id="Choose-dataset-parameters-1"></a><a class="docs-heading-anchor-permalink" href="#Choose-dataset-parameters" title="Permalink"></a></h3><p>This is the only block you should modify Set <code>only_small</code> to <code>false</code> and <code>smaller_datasets</code> to <code>false</code> to run the experiments in the paper. Beware, it takes several days to run.</p><pre><code class="language-julia hljs">only_small = true # if true, only small instances are considered
+smaller_datasets = true # if true, fewer instances are considered computation takes roughly one hour, if false several days
+normalized = true</code></pre><h3 id="Build-datasets"><a class="docs-heading-anchor" href="#Build-datasets">Build datasets</a><a id="Build-datasets-1"></a><a class="docs-heading-anchor-permalink" href="#Build-datasets" title="Permalink"></a></h3><pre><code class="language-julia hljs">@time training_datasets, validation_datasets, test_datasets = build_or_load_spanning_tree_CO_layer_datasets(;
+    parallel=false, # Use true only if solutions have already been computed in folder data, otherwise it may bug due to the MILP solver
+    only_small=only_small,
+    only_lagrangian=false,
+    normalized=normalized,
+    negative_weights=true,
+    smaller_datasets=smaller_datasets,
+);
+
+models = Dict()</code></pre><h2 id="Train-models"><a class="docs-heading-anchor" href="#Train-models">Train models</a><a id="Train-models-1"></a><a class="docs-heading-anchor-permalink" href="#Train-models" title="Permalink"></a></h2><h3 id="Supervised-learning-with-Fenchel-Young-Losses-(FYL)"><a class="docs-heading-anchor" href="#Supervised-learning-with-Fenchel-Young-Losses-(FYL)">Supervised learning with Fenchel Young Losses (FYL)</a><a id="Supervised-learning-with-Fenchel-Young-Losses-(FYL)-1"></a><a class="docs-heading-anchor-permalink" href="#Supervised-learning-with-Fenchel-Young-Losses-(FYL)" title="Permalink"></a></h3><pre><code class="language-julia hljs">for (dataset_name, dataset) in training_datasets
+    println(&quot;training with FYL on &quot;, dataset_name)
+    model, training_time, losses = train_save_or_load_FYL_model!(;
+        nb_samples=20, train_data=dataset, train_data_name=dataset_name, nb_epochs=200
+    )
+    model_name = &quot;fyl_&quot; * dataset_name * &quot;_iter200_perttrue_intpert1_nbpert20&quot;
+    models[model_name] = Dict(
+        &quot;model&quot; =&gt; model,
+        &quot;learning_algorithm&quot; =&gt; &quot;fyl&quot;,
+        &quot;train_data_name&quot; =&gt; dataset_name,
+        &quot;training_time&quot; =&gt; training_time,
+        &quot;pert&quot; =&gt; true,
+        &quot;intpert&quot; =&gt; 1.0,
+        &quot;nbpert&quot; =&gt; 20,
+        &quot;losses&quot; =&gt; losses,
+    )
+    println(lineplot(losses))
+end</code></pre><h3 id="Learning-by-experience-with-global-derivative-free-algorithm"><a class="docs-heading-anchor" href="#Learning-by-experience-with-global-derivative-free-algorithm">Learning by experience with global derivative free algorithm</a><a id="Learning-by-experience-with-global-derivative-free-algorithm-1"></a><a class="docs-heading-anchor-permalink" href="#Learning-by-experience-with-global-derivative-free-algorithm" title="Permalink"></a></h3><h5 id="Non-perturbed"><a class="docs-heading-anchor" href="#Non-perturbed">Non perturbed</a><a id="Non-perturbed-1"></a><a class="docs-heading-anchor-permalink" href="#Non-perturbed" title="Permalink"></a></h5><pre><code class="language-julia hljs">for (dataset_name, dataset) in training_datasets
+    train_bbl_model_and_add_to_dict!(
+        models; train_data_name=dataset_name, train_data=dataset, nb_DIRECT_iterations=1000
+    )
+end</code></pre><h5 id="Perturbed"><a class="docs-heading-anchor" href="#Perturbed">Perturbed</a><a id="Perturbed-1"></a><a class="docs-heading-anchor-permalink" href="#Perturbed" title="Permalink"></a></h5><pre><code class="language-julia hljs">intensities = [0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3]
+
+for intensity in intensities
+    for (dataset_name, dataset) in training_datasets
+        @info &quot;bbl on &quot; * dataset_name * &quot; with intensity &quot; * string(intensity)
+        train_bbl_model_and_add_to_dict!(
+            models;
+            train_data_name=dataset_name,
+            train_data=dataset,
+            nb_DIRECT_iterations=1000,
+            perturbed=true,
+            perturbation_intensity=intensity,
+            nb_perturbations=20,
+        )
+    end
+end</code></pre><h3 id="Add-model-corresponding-to-the-approximation-algorithm"><a class="docs-heading-anchor" href="#Add-model-corresponding-to-the-approximation-algorithm">Add model corresponding to the approximation algorithm</a><a id="Add-model-corresponding-to-the-approximation-algorithm-1"></a><a class="docs-heading-anchor-permalink" href="#Add-model-corresponding-to-the-approximation-algorithm" title="Permalink"></a></h3><pre><code class="language-julia hljs">models[&quot;approx&quot;] = Dict(
+    &quot;model&quot; =&gt; MaximumWeightTwoStageSpanningTree.approx_algorithm_model(),
+    &quot;learning_algorithm&quot; =&gt; &quot;approx&quot;,
+    &quot;train_data_name&quot; =&gt; &quot;--&quot;,
+    &quot;training_time&quot; =&gt; &quot;--&quot;,
+    &quot;pert&quot; =&gt; false,
+    &quot;intpert&quot; =&gt; 0,
+    &quot;nbpert&quot; =&gt; 0,
+)</code></pre><h2 id="Evaluate-model-performances-on-validation-and-test-sets"><a class="docs-heading-anchor" href="#Evaluate-model-performances-on-validation-and-test-sets">Evaluate model performances on validation and test sets</a><a id="Evaluate-model-performances-on-validation-and-test-sets-1"></a><a class="docs-heading-anchor-permalink" href="#Evaluate-model-performances-on-validation-and-test-sets" title="Permalink"></a></h2><pre><code class="language-julia hljs">recompute_results = false # put to true to force results recompute (needed if content of validation or test sets changed)
+results_folder = &quot;results&quot;
+mkpath(results_folder)
+val_and_test_sets = merge(validation_datasets, test_datasets)
+results = test_or_load_models_on_datasets(
+    models=models,
+    datasets=val_and_test_sets,
+    results_folder=results_folder,
+    recompute_results=recompute_results
+)</code></pre><p>Add model corresponding to ub</p><pre><code class="language-julia hljs">models[&quot;ub&quot;] = Dict(
+    &quot;learning_algorithm&quot; =&gt; &quot;UB&quot;,
+    &quot;train_data_name&quot; =&gt; &quot;--&quot;,
+    &quot;training_time&quot; =&gt; &quot;--&quot;,
+    &quot;pert&quot; =&gt; false,
+    &quot;intpert&quot; =&gt; 0,
+    &quot;nbpert&quot; =&gt; 0,
+)</code></pre><h2 id="Build-hyperparameters-choice-table"><a class="docs-heading-anchor" href="#Build-hyperparameters-choice-table">Build hyperparameters choice table</a><a id="Build-hyperparameters-choice-table-1"></a><a class="docs-heading-anchor-permalink" href="#Build-hyperparameters-choice-table" title="Permalink"></a></h2><pre><code class="language-julia hljs">using Printf</code></pre><p>Function to compute averages on datasets</p><pre><code class="language-julia hljs">function average_and_worst_on_dataset(dataset_results, f)
+    model_names = collect(keys(dataset_results[1][3]))
+    averages = Dict(zip(model_names, zeros(length(model_names))))
+    worsts = Dict(zip(model_names, -Inf * ones(length(model_names))))
+    for (_, lb, ubs) in dataset_results
+        for (model_name, ub) in ubs
+            f_val = f(lb, ub)
+            averages[model_name] += f_val
+            worsts[model_name] = max(worsts[model_name], f_val)
+        end
+    end
+    l = length(dataset_results)
+    map!(x -&gt; x / l, values(averages))
+    return (averages, worsts)
+end</code></pre><p>Hyperparameter tunning table</p><pre><code class="language-julia hljs">tables_folder = &quot;tables&quot;
+mkpath(tables_folder)
+
+begin
+    io_hyperparams = open(joinpath(tables_folder, &quot;hyperparameters_neg.tex&quot;), &quot;w&quot;)
+    for (name, _) in validation_datasets
+        println(&quot;Gap on &quot;, name)
+        averages, worsts = average_and_worst_on_dataset(
+            results[name], (lb, ub) -&gt; (ub - lb) / -lb
+        )
+        for model in sort(collect(keys(averages)))
+            train_data_name = models[model][&quot;train_data_name&quot;]
+            learning_algorithm = models[model][&quot;learning_algorithm&quot;]
+            intpert = models[model][&quot;pert&quot;] ? models[model][&quot;intpert&quot;] : 0.0
+            gap_percent = 100 * averages[model]
+            @printf(
+                &quot;%s &amp; %s &amp; %.1e &amp; %.1f\\%% \\\\\n&quot;,
+                train_data_name,
+                learning_algorithm,
+                intpert,
+                gap_percent
+            )
+            @printf(
+                io_hyperparams,
+                &quot;%s &amp; %s &amp; %.1e &amp; %.1f\\%% \\\\\n&quot;,
+                train_data_name,
+                learning_algorithm,
+                intpert,
+                gap_percent
+            )
+        end
+    end
+    close(io_hyperparams)
+end
+model_names = collect(keys(results))</code></pre><h2 id="Build-Figure-evaluating-the-performance-of-the-model"><a class="docs-heading-anchor" href="#Build-Figure-evaluating-the-performance-of-the-model">Build Figure evaluating the performance of the model</a><a id="Build-Figure-evaluating-the-performance-of-the-model-1"></a><a class="docs-heading-anchor-permalink" href="#Build-Figure-evaluating-the-performance-of-the-model" title="Permalink"></a></h2><p>Following the results of the hyper-parameter tuning model, we use 1e-3</p><h4 id="Starts-by-choosing-the-datasets-and-models-used-for-the-figure-in-accordance-with-initial-dataset-selection"><a class="docs-heading-anchor" href="#Starts-by-choosing-the-datasets-and-models-used-for-the-figure-in-accordance-with-initial-dataset-selection">Starts by choosing the datasets and models used for the figure in accordance with initial dataset selection</a><a id="Starts-by-choosing-the-datasets-and-models-used-for-the-figure-in-accordance-with-initial-dataset-selection-1"></a><a class="docs-heading-anchor-permalink" href="#Starts-by-choosing-the-datasets-and-models-used-for-the-figure-in-accordance-with-initial-dataset-selection" title="Permalink"></a></h4><pre><code class="language-julia hljs">performance_dataset_name = &quot;large_lagrangian_test_data_normtrue_negtrue&quot;
+performance_bbl_model_name = &quot;bbl_large_lagrangian_train_data_normtrue_negtrue_iter1000_perttrue_intpert0.001_nbpert20&quot;
+performance_fyl_model_name = &quot;fyl_large_lagrangian_train_data_normtrue_negtrue_iter200_perttrue_intpert1_nbpert20&quot;
+x_nb_vertices = [x^2 for x in 10:10:60]
+if smaller_datasets
+    x_nb_vertices = [x^2 for x in 10:10:20]
+    performance_dataset_name = &quot;large_lagrangian_test_data_normtrue_negtrue_smaller&quot;
+    performance_bbl_model_name = &quot;bbl_large_lagrangian_train_data_normtrue_negtrue_smaller_iter1000_perttrue_intpert0.001_nbpert20&quot;
+    performance_fyl_model_name = &quot;fyl_large_lagrangian_train_data_normtrue_negtrue_smaller_iter200_perttrue_intpert1_nbpert20&quot;
+end
+if only_small
+    if smaller_datasets
+        performance_dataset_name = &quot;small_lagrangian_test_data_normtrue_negtrue_smaller&quot;
+        performance_bbl_model_name = &quot;bbl_small_benders_train_data_normtrue_negtrue_smaller_iter1000_perttrue_intpert0.001_nbpert20&quot;
+        performance_fyl_model_name = &quot;fyl_small_benders_train_data_normtrue_negtrue_smaller_iter200_perttrue_intpert1_nbpert20&quot;
+        &quot;ub&quot;
+        x_nb_vertices = [x^2 for x in 4:5]
+    else
+        performance_dataset_name = &quot;small_lagrangian_test_data_normtrue_negtrue&quot;
+        performance_bbl_model_name = &quot;bbl_small_benders_train_data_normtrue_negtrue_iter1000_perttrue_intpert0.001_nbpert20&quot;
+        performance_fyl_model_name = &quot;fyl_small_benders_train_data_normtrue_negtrue_iter200_perttrue_intpert1_nbpert20&quot;
+        &quot;ub&quot;
+        x_nb_vertices = [x^2 for x in 4:6]
+    end
+end</code></pre><p>Performance of the approximation algorithm</p><pre><code class="language-julia hljs">average_and_worst_on_dataset(
+    results[performance_dataset_name], (lb, ub) -&gt; (ub - lb) / -lb
+)[2][&quot;approx&quot;]
+
+function conditional_average_and_worst_for_model(
+    dataset_results, statistic, model_name, condition=instance -&gt; true
+)
+    count = 0
+    average = 0.0
+    worst = -Inf
+    for (instance, lb, ubs) in dataset_results
+        if condition(instance)
+            stat_val = statistic(lb, ubs[model_name])
+            count += 1
+            average += stat_val
+            worst = max(worst, stat_val)
+        end
+    end
+    average /= count
+    return (average, worst)
+end</code></pre><p>Compute plot data</p><pre><code class="language-julia hljs">pipelines_average_worst = [
+    conditional_average_and_worst_for_model(
+        results[performance_dataset_name],
+        (lb, ub) -&gt; (ub - lb) / -lb,
+        performance_bbl_model_name,
+        instance -&gt; nv(instance.g) == nb_vert,
+    ) for nb_vert in x_nb_vertices
+]
+y_pipeline_average = [y for (y, _) in pipelines_average_worst]
+y_pipeline_worst = [y for (_, y) in pipelines_average_worst]
+
+fyl_average_worst = [
+    conditional_average_and_worst_for_model(
+        results[performance_dataset_name],
+        (lb, ub) -&gt; (ub - lb) / -lb,
+        performance_fyl_model_name,
+        instance -&gt; nv(instance.g) == nb_vert,
+    ) for nb_vert in x_nb_vertices
+]
+y_fyl_average = [y for (y, _) in fyl_average_worst]
+y_fyl_worst = [y for (_, y) in fyl_average_worst]
+
+approx_average_worst = [
+    conditional_average_and_worst_for_model(
+        results[performance_dataset_name],
+        (lb, ub) -&gt; (ub - lb) / -lb,
+        &quot;approx&quot;,
+        instance -&gt; nv(instance.g) == nb_vert,
+    ) for nb_vert in x_nb_vertices
+]
+y_approx_average = [y for (y, _) in approx_average_worst]
+y_approx_worst = [y for (_, y) in approx_average_worst]
+
+lh_average_worst = [
+    conditional_average_and_worst_for_model(
+        results[performance_dataset_name],
+        (lb, ub) -&gt; (ub - lb) / -lb,
+        &quot;ub&quot;,
+        instance -&gt; nv(instance.g) == nb_vert,
+    ) for nb_vert in x_nb_vertices
+]
+y_lh_average = [y for (y, _) in lh_average_worst]
+y_lh_worst = [y for (_, y) in lh_average_worst]</code></pre><p>Plot. Result in folder &quot;figures/gap<em>to</em>lag_bound.pdf&quot;</p><pre><code class="language-julia hljs">using CairoMakie
+CairoMakie.activate!()
+figure_path = &quot;figures&quot;
+mkpath(figure_path)
+
+begin
+    fig = Figure()
+    ax = Axis(
+        fig[1, 1];
+        xlabel=&quot;|V|&quot;,
+        ylabel=&quot;Gap to Lagrangian Bound (%)&quot;,
+        limits=(0, maximum(x_nb_vertices), 0, 6.8),
+    )
+    lines!(
+        ax,
+        x_nb_vertices,
+        100 * y_pipeline_average;
+        label=&quot;Pipeline (Regret) average gap&quot;,
+        linestyle=:dashdot,
+    )
+    lines!(
+        ax,
+        x_nb_vertices,
+        100 * y_pipeline_worst;
+        label=&quot;Pipeline (Regret) worst gap&quot;,
+        linestyle=:dashdot,
+    )
+    lines!(
+        ax,
+        x_nb_vertices,
+        100 * y_fyl_average;
+        label=&quot;Pipeline (FYL) average gap&quot;,
+        linestyle=:dot,
+    )
+    lines!(
+        ax,
+        x_nb_vertices,
+        100 * y_fyl_worst;
+        label=&quot;Pipeline (FYL) worst gap&quot;,
+        linestyle=:dot,
+    )
+    lines!(ax, x_nb_vertices, 100 * y_lh_average; label=&quot;Lagrangian heuristic average gap&quot;)
+    lines!(ax, x_nb_vertices, 100 * y_lh_worst; label=&quot;Lagrangian heuristic worst gap&quot;)
+    lines!(ax, x_nb_vertices, 100 * y_approx_average; label=&quot;Approx algorithm average gap&quot;)
+    lines!(ax, x_nb_vertices, 100 * y_approx_worst; label=&quot;Approx algorithm worst gap&quot;)
+    axislegend(ax)
+    current_figure()
+    save(joinpath(figure_path, &quot;gap_to_lag_bound.pdf&quot;), current_figure())
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../optimization/">« Optimization algorithms</a><a class="docs-footer-nextpage" href="../api/">API reference »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.24 on <span class="colophon-date" title="Friday 27 January 2023 14:05">Friday 27 January 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
