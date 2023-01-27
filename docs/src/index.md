@@ -22,5 +22,6 @@ In order to reproduce the paper experiments, open a `julia` repl in the package 
     using Pkg
     Pkg.activate(".")
     Pkg.activate("./scripts")
+    Pkg.instantiate()
     include("scripts/run_paper_experiments.jl")
 ```

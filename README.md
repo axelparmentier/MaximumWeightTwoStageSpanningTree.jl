@@ -22,6 +22,7 @@ Open a `julia` repl in the package folder, and run the following code
     using Pkg
     Pkg.activate(".")
     Pkg.activate("./docs")
+    Pkg.instantiate()
     include("docs/make.jl")
 ```
 
@@ -35,5 +36,6 @@ Open a `julia` repl in the package folder, and run the following code
     using Pkg
     Pkg.activate(".")
     Pkg.activate("./scripts")
+    Pkg.instantiate()
     include("scripts/run_paper_experiments.jl")
 ```
