@@ -1,0 +1,4 @@
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+MaximumWeightTwoStageSpanningTree = "5c5c361d-8c87-416b-955b-2539b798503b"
+UnicodePlots = "b8865327-cd53-5732-bb35-84acbb429228"
